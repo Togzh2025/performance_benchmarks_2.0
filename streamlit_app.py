@@ -24,6 +24,13 @@ if uploaded_file:
     # Rename columns if they exist in the dataset
     df.rename(columns={col: standard for col, standard in column_mapping.items() if col in df.columns}, inplace=True)
 
+    # ✅ Clean 'Total spent' column (Remove non-numeric characters)
+    if 'amount spent (usd)' in df.columns:
+        df['amount spent (usd)'] = df['amount spent (usd)'].replace({r'[^\d.]': ''}, regex=True).astype(float)
+    else:
+        st.error("🚨 Error: 'Amount spent (USD)' column is missing. Cannot calculate metrics.")
+        st.stop()
+
     # ✅ User-defined Campaign Grouping
     st.subheader("🔧 Customize Campaign Grouping")
     user_keywords = st.text_area(
